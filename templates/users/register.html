@@ -1,0 +1,25 @@
+{% extends 'rango/base.html' %}
+<!-- 用到静态文件的每个模板都要在文件顶部添加{% load staticfiles %}。
+  否则会导致错误！-->
+{% load staticfiles %}
+
+{% block title_block %}
+   分类：{{ category.name }}
+{% endblock %}
+
+{% block body_block %}
+    <h1>欢迎注册</h1>
+    {% if registed %}
+        <h2>注册成功</h2>
+        <a href="{% url "index" %}">返回主页</a>
+    {% else %}
+        <form action="{% url 'users:register' %}" method="post">
+            {% csrf_token %}
+            {{ userform.as_p }}
+            {{ userprofileform.as_p }}
+            <input type="submit" name="submit" value="注册"/>
+        </form>
+    {% endif %}
+
+
+{% endblock %}

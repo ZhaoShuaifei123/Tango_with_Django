@@ -1,0 +1,25 @@
+{% extends 'rango/base.html' %}
+<!-- 用到静态文件的每个模板都要在文件顶部添加{% load staticfiles %}。
+  否则会导致错误！-->
+{% load staticfiles %}
+
+{% block title_block %}
+   分类：{{ category.name }}
+{% endblock %}
+
+{% block body_block %}
+    {% if pages %}
+    <ul>
+    {% for page in pages %}
+    <li>
+        <a href="{{ page.url }}">{{ page.title }}</a>
+    </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <strong>当前分类下没有页面</strong>
+{% endif %}
+
+<a href="{% url "rango:add_page"  category.slug%}">添加页面</a>
+
+{% endblock %}

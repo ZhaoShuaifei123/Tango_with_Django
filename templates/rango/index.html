@@ -1,0 +1,43 @@
+{% extends "rango/base.html" %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Rango应用
+{% endblock %}
+{% block body_block %}
+       <div>
+         {% if category_list %}
+             <strong>访问最多的5个分类</strong>
+             <ul>
+                 {% for category in category_list %}
+                  <li><a href="{% url "rango:show_category" category.slug %}">{{ category.name }}</a></li>
+                  {% endfor %}
+             </ul>
+         {% else %}
+             <strong>目前没有分类</strong>
+         {% endif %}
+          <a href="{% url "rango:add_category" %}">添加分类</a>
+      </div>
+
+      <div>
+         {% if page_list %}
+             <strong>访问最多的5个页面</strong>
+             <ul>
+                 {% for page in page_list %}
+                  <li><a href="{{page.url}}">{{ page.title}}</a></li>
+                  {% endfor %}
+             </ul>
+         {% else %}
+             <strong>目前没有页面</strong>
+         {% endif %}
+      </div>
+
+      <div>
+           <!--  <a href="/rango/about/">关于</a><br /> 通过链接访问
+           <a href="{% url 'rango:about' %}">关于</a> 通过URL中的name  -->
+           <img src="{% static "images/rango.jpg" %} "  alt="picture of Rango"/>
+       </div>
+{% endblock %}
+
+
+
