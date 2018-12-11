@@ -1,0 +1,27 @@
+{% extends 'rango/base.html' %}
+<!-- 用到静态文件的每个模板都要在文件顶部添加{% load staticfiles %}否则会导致错-->
+{% load staticfiles %}
+
+{% block title_block %}
+   登录
+{% endblock %}
+
+{% block body_block %}
+    <!-- Custom styles for this template 可以在单独使用的页面导入css链接 -->
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet">
+     <div class="container">
+      <form class="form-signin"  action="{% url "auth_login" %}" method="post">
+          {% csrf_token %}
+        <h2 class="form-signin-heading">欢迎登录Tango</h2>
+        <label for="inputUsername" class="sr-only">用户名</label>
+        <input type="text" name="username" class="form-control" placeholder="username" required autofocus>
+
+        <label for="inputPassword" class="sr-only">密码</label>
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+          <label>
+            没有账号？ <a href="{% url 'registration_register' %}">注册</a>
+          </label>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+      </form>
+    </div> <!-- /container -->
+{% endblock %}

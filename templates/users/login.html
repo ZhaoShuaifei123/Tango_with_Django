@@ -1,0 +1,21 @@
+{% extends 'rango/base.html' %}
+<!-- 用到静态文件的每个模板都要在文件顶部添加{% load staticfiles %}否则会导致错-->
+{% load staticfiles %}
+
+{% block title_block %}
+   登录
+{% endblock %}
+
+{% block body_block %}
+    <h1>欢迎登录Rango</h1>
+        <form action="{% url 'users:login' %}" method="post">
+           {% csrf_token %}
+            用户名：<input type="text" name="username" value="" size="50"/>
+            <br/>
+            密码：<input type="password" name="password" value="" size="50"/>
+             <br/>
+             <input type="submit" name="submit" value="登录" />
+        </form>
+
+
+{% endblock %}
