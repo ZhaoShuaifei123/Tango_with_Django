@@ -7,6 +7,6 @@ register=template.Library()
 #自定义了参数化模板标签
 @register.inclusion_tag('rango/cats.html')
 def get_category_list(cat=None):
-    return {'cats':Category.objects.order_by('-views')[:5],
+    return {'cats':Category.objects.order_by('-views')[:8],
             'act_cat':cat}
 

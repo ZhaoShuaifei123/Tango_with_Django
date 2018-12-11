@@ -16,10 +16,20 @@
     </li>
     {% endfor %}
     </ul>
-{% else %}
-    <strong>当前分类下没有页面</strong>
-{% endif %}
+    {% else %}
+         <strong>当前分类下没有页面</strong>
+    {% endif %}
 
-<a href="{% url "rango:add_page"  category.slug%}">添加页面</a>
+    <div>
+    <strong id="like_count">{{category.likes}}</strong>人喜欢这个分类
+    {% if  user.is_authenticated %}
+        <button id="likes" data-catid="{{category.id}}" class="btn btn-primary btn-sm"  type="button">
+        喜欢
+        </button>
+        <br>
+        <a href="{% url "rango:add_page"  category.slug%}">添加页面</a>
+    {% endif %}
+    </div>
+
 
 {% endblock %}

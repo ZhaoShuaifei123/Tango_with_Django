@@ -32,12 +32,13 @@ SECRET_KEY = '-#t6^w-s9_5_cyg2qv=2v#9x$!hax(hw^9+mbuur=_b*ccl2pe'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     #auth应用用于Django提供的用户身份验证系统，auth应用默认存储的是经过PBkDF2算法计算过的密码哈希值，可以在setting中设置更新加密算法
     'django.contrib.auth',
@@ -48,7 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rango',
     'users',
+    'registration'  # 使用外部应用registration
 ]
+
+
 
 #下面的加密算法是自己添加的，Django 默认使用 PBKDF2 算法计算密码哈希值。如果未在 settings.py 文件中设定 PASSWORD_HASHERS， Django 将使用默认的 PBKDF2PasswordHasher
 #罗列哈希算法的顺序很重要， Django 将使用 PASSWORD_HASHERS 中的第一个哈希算法（settings.PASSWORD_HASHERS[0]）。如果第一个无效，而且还有其他哈希算法供选择， Django将依次尝试后面的算法
@@ -66,6 +70,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'rango_django_project.urls'
 
@@ -142,4 +148,27 @@ USE_TZ = True
 
 #静态文件被客户端访问的位置
 STATIC_URL = '/static/'
+
+#允许用户注册
+REGISTRATION_OPEN = True
+
+
+# 留一周的激活时间；当然，也可以设为其他值
+ACCOUNT_ACTIVATION_DAYS = 7
+
+# 设为 True，注册后自动登录
+REGISTRATION_AUTO_LOGIN = True
+# 登录后（重定向）呈现给用户的页面，'/'是首页
+LOGIN_REDIRECT_URL = '/'
+
+# 注销后呈现给用户的页面
+LOGOUT_REDIRECT_URL = '/'
+
+# 未登录以及访问需要验证身份的页面时重定向的页面
+LOGIN_URL = '/accounts/login/'
+
+#设置session_cookie的存活时间
+SESSION_COOKIE_AGE = 18000
+
+
 

@@ -9,6 +9,6 @@
 <form id="page_form" action="{% url "rango:add_page" category.slug %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-     <input type="submit" value="添加" name="submit"/>
+ <button class="btn btn-primary" type="submit" name="submit">添加</button>
 </form>
 {% endblock %}

@@ -1,23 +1,61 @@
-from django.shortcuts import render
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-# Create your views here.
+from django.shortcuts import render, redirect
+
+from django.urls import reverse
+from registration.backends.simple.views import RegistrationView
 
 from rango.models import Category,Page
 from rango.form import  CategoryForm,PageForm
+from rango.webhose_search import run_query
+
+
+def get_server_side_cookie(request,cookie,default_val=None):
+    #通过 requests.sessions.get() 检查 cookie 是否存在,因为request中有存放sessionid的cookie
+    val=request.session.get(cookie)
+    if not val:
+        val=default_val
+    return val
+
+def visitor_cookie_handler(request):
+    #获得或者创建一个cookie：visits,request.COOKIES.get这个方法获取的都会变成字符串类型
+    visits=int(get_server_side_cookie(request,'visits','1'))
+    last_visit_cookie = get_server_side_cookie(request,'last_visit',str(datetime.now()))
+    #把last_visit变成Datetime类型
+    last_visit_time=datetime.strptime(last_visit_cookie[:-7],'%Y-%m-%d %H:%M:%S')
+
+    #设置成连续10s内访问不增加数值
+    if(datetime.now()-last_visit_time).seconds>=10:
+        visits=visits+1
+        request.session['last_visit']=str(datetime.now())
+    else:
+        request.session['last_visit']=last_visit_cookie
+
+    request.session['visits']=visits
+
 
 def index(request):
+
     #想要赋值使用字典的话，必须要先定义字典
     context_dict = {}
     #查询数据库，获取前5个分类，放入上下文变量中
-    category_list=Category.objects.order_by('-likes')[:5]
+    category_list=Category.objects.order_by('-views')[:5]
     #创建上下文字典，渲染模板
     context_dict['category_list'] =category_list
-    #渲染响应，发给客户端
 
     page_list=Page.objects.order_by('-views')[:5]
     context_dict['page_list']=page_list
 
-    return render(request,'rango/index.html',context_dict)
+    #调用处理 cookie 的辅助函数
+    visitor_cookie_handler(request)
+    context_dict['visits']=request.session['visits']
+
+    # render是生成一个response对象
+    response = render(request, 'rango/index.html', context_dict)
+
+    # 返回 response 对象，更新目标 cookie
+    return response
 
 def show_category(request,category_name_slug):
     context_dict={}
@@ -36,6 +74,8 @@ def about(request):
     # return HttpResponse("<hr>"+"<h2>关于</h2>"+"<hr>")
     return render(request,'rango/about.html',{})
 
+
+@login_required
 def add_category(request):
     #创建一个CategoryForm对象
     form = CategoryForm()
@@ -61,6 +101,7 @@ def add_category(request):
 
     return render(request,'rango/add_category.html',{"form":form})
 
+@login_required
 def add_page(request,category_name_slug):
 
     try:
@@ -86,6 +127,72 @@ def add_page(request,category_name_slug):
 
     context_dict={"form":form,"category":category}
     return render(request,"rango/add_page.html",context_dict)
+
+
+#RangoRegistrationView类继承了RegistrationView，并且重写了get_success_url方法
+class RangoRegistrationView(RegistrationView):
+    def get_success_url(self, user):
+        return reverse('index')
+
+def search(request):
+    result_list=[]
+    query_str=""
+    if request.method == "POST":
+        query_str=request.POST['query'].strip()
+        if query_str:
+            result_list=run_query(query_str)
+
+    return render(request,"rango/search.html",{"result_list":result_list,"query_str":query_str})
+
+@login_required
+def like_category(request):
+    cat_id = None
+    print("怎么回事儿")
+
+    if request.method == "GET":
+        cat_id = request.GET['category_id']
+    likes = 0
+    if cat_id:
+        cat =Category.objects.get(id=int(cat_id))
+        if cat:
+            likes = cat.likes+1
+            cat.likes = likes
+            cat.save()
+    return HttpResponse(likes)
+
+def get_category_list(max_results=0,starts_with=""):
+    cat_list = []
+    if starts_with:
+        cat_list = Category.objects.filter(name__istartswith=starts_with)
+
+    if max_results>0:
+        if len(cat_list)>max_results:
+            cat_list=cat_list[:max_results]
+    return cat_list
+
+
+def suggest_category(request):
+    cat_list = []
+    starts_with = ""
+
+    if request.method == "GET":
+        starts_with = request.GET['suggestion']
+    cat_list=get_category_list(8,starts_with)
+    #render生成一个response对象，这个响应对象是经过数据渲染过的html代码。
+    # 然后return返回给向这个函数发送请求的对象，可能是浏览器，可能是ajax请求
+    return render(request,'rango/cats.html',{'cats':cat_list})
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

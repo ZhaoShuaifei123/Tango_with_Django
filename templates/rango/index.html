@@ -5,38 +5,50 @@
     Rango应用
 {% endblock %}
 {% block body_block %}
-       <div>
+     <!-- Custom styles for this template -->
+ <link href="https://getbootstrap.com/docs/4.0/examples/narrow-jumbotron.css" rel="stylesheet">
+
+      <div>
+           <img src="{% static "images/Tango.jpg" %} "  alt="picture of Rango"/>
+       </div>
+
+    <h4>您访问了{{ visits }}次</h4>
+     <div class="row marketing">
+        <div class="col-lg-6">
+          <h4> 访问最多的5个分类:</h4>
          {% if category_list %}
-             <strong>访问最多的5个分类</strong>
              <ul>
                  {% for category in category_list %}
-                  <li><a href="{% url "rango:show_category" category.slug %}">{{ category.name }}</a></li>
+                  <li><p><a href="{% url "rango:show_category" category.slug %}">{{ category.name }}</a></p></li>
                   {% endfor %}
              </ul>
          {% else %}
-             <strong>目前没有分类</strong>
+             <p>目前没有分类</p>
          {% endif %}
-          <a href="{% url "rango:add_category" %}">添加分类</a>
-      </div>
 
-      <div>
-         {% if page_list %}
-             <strong>访问最多的5个页面</strong>
+         {% if user.is_authenticated %}
+           <p><a href="{% url "rango:add_category" %}">添加分类</a></p>
+         {% endif %}
+
+
+        </div>
+
+        <div class="col-lg-6">
+
+            {% if page_list %}
+             <h4>访问最多的5个页面:</h4>
              <ul>
                  {% for page in page_list %}
-                  <li><a href="{{page.url}}">{{ page.title}}</a></li>
+                  <li><p><a href="{{page.url}}">{{ page.title}}</a></p></li>
                   {% endfor %}
              </ul>
          {% else %}
-             <strong>目前没有页面</strong>
+             <p>目前没有页面</p>
          {% endif %}
+
+        </div>
       </div>
 
-      <div>
-           <!--  <a href="/rango/about/">关于</a><br /> 通过链接访问
-           <a href="{% url 'rango:about' %}">关于</a> 通过URL中的name  -->
-           <img src="{% static "images/rango.jpg" %} "  alt="picture of Rango"/>
-       </div>
 {% endblock %}
 
 

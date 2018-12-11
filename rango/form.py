@@ -28,8 +28,8 @@ class CategoryForm(forms.ModelForm):
 
 class PageForm(forms.ModelForm):
     #下面的小组件并不是必须要写的，一定要写上Meta类，并且关联上具体的模型类，表单上显示的都是fields上的，对于下面的小组件的定义会覆盖默认的小组件，不然就会使用默认的。
-    title=forms.CharField(max_length=128,help_text="请输入页面标题名称")
-    url=forms.URLField(max_length=128,help_text="请输入页面的链接")
+    title=forms.CharField(max_length=128,help_text="请输入页面标题名称",label='标题')
+    url=forms.URLField(max_length=128,help_text="请输入页面的链接",label='链接')
     views=forms.IntegerField(widget=forms.HiddenInput(),initial=0)
 
     class Meta:
